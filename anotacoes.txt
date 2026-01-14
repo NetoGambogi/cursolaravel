@@ -1,0 +1,7 @@
+Site de temas  do bootstrap: https://bootswatch.com/
+
+---------------------------------------------------
+
+O middleware auth sempre procura rotas pelo nome
+
+Aula 194 do curso diz sobre tradução das mensagens de erro, pasta lang que foi extinta no laravel 12
