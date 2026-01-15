@@ -18,9 +18,9 @@ class UsersTableSeeder extends Seeder
 
         for ($i = 1; $i <= 3; $i++) {
             User::create([
-                'username' => "user$i",
-                'email' => "user$i@gmail.com",
-                'password' => bcrypt('masterkey'),
+                'username' => "teste$i",
+                'email' => "teste$i@gmail.com",
+                'password' => bcrypt('Masterkey1*'),
                 'email_verified_at' => Carbon::now(),
                 'active' => true,
             ]);
