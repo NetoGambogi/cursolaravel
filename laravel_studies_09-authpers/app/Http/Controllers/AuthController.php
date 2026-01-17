@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\NewUserConfirmation;
+use App\Mail\ResetPassword;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -184,5 +185,189 @@ class AuthController extends Controller
 
         // mensagem de sucesso
         return view('auth.new_user_confirmation');
+    }
+
+    public function profile(): View
+    {
+        return view('auth.profile');
+    }
+
+    public function change_password(Request $request)
+    {
+        // form validation
+        $request->validate(
+            [
+                'current_password' => 'required|min:8|max:32|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+                'new_password' => 'required|min:8|max:32|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/|different:current_password',
+                'new_password_confirmation' => 'required|same:new_password'
+            ],
+            [
+                'current_password.required' => 'A senha atual é obrigatória.',
+                'current_password.min' => 'A senha atual deve conter no mínimo :min caracteres.',
+                'current_password.max' => 'A senha atual deve conter no máximo :max caracteres.',
+                'current_password.regex' => 'A senha atual deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número.',
+                'new_password.required' => 'A nova senha é obrigatória.',
+                'new_password.min' => 'A nova senha deve conter no mínimo :min caracteres.',
+                'new_password.max' => 'A nova senha deve conter no máximo :max caracteres.',
+                'new_password.regex' => 'A nova senha deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número.',
+                'new_password.different' => 'A nova senha deve ser diferente da senha atual.',
+                'new_password_confirmation.required' => 'A confirmação da nova senha é obrigatória.',
+                'new_password_confirmation.same' => 'A confirmação da nova senha deve ser igual à nova senha.',
+            ]
+        );
+
+        //verificar se a senha atual está correta
+        if (!password_verify($request->current_password, Auth::user()->password)) {
+            return back()->with([
+                'server_error' => 'A senha atual está incorreta.'
+            ]);
+        }
+
+        //atualizar a senha no db
+        $user = Auth::user();
+        $user->password = bcrypt($request->new_password);
+        $user->save();
+
+        //atualizar a senha na sessao
+        Auth::user()->password = $request->new_password;
+
+        //mostrar mensagem de sucesso
+        return redirect()->route('profile')->with([
+            'success' => 'A senha foi atualizada com sucesso.'
+        ]);
+    }
+
+    public function forgot_password(): View
+    {
+        return view('auth.forgot_password');
+    }
+
+    public function send_reset_password_link(Request $request)
+    {
+        //validacoes
+        $request->validate(
+            [
+                'email' => ['required', 'email'],
+            ],
+            [
+                'email.required' => 'O email é obrigatório',
+                'email.email' => 'O email deve ser válido.',
+            ]
+        );
+
+        $generic_message = "Verifique seu email para prosseguir com o processo de recuperação de senha.";
+
+        //verificar se o email existe
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->with([
+                'server_message' => $generic_message
+            ]);
+        }
+
+        //criar link com token para enviar ao email
+
+        $user->token = Str::random(64);
+
+        $token_link = route('reset_password', ['token' => $user->token]);
+
+        //envio do email com link de recuperacao de senha
+        $result = Mail::to($user->email)->send(new ResetPassword($user->username, $token_link));
+
+        //verificar se o email foi enviado
+        if (!$result) {
+            return back()->with(['server_message' => $generic_message]);
+        }
+
+        //salva o token no db
+
+        $user->save();
+
+        return back()->with(['server_message' => $generic_message]);
+    }
+
+    public function reset_password($token): View | RedirectResponse
+    {
+        //verificar se o token é válido
+        $user = User::where('token', $token)->first();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        return view('auth.reset_password', ['token' => $token]);
+    }
+
+    public function reset_password_update(Request $request): RedirectResponse
+    {
+        //validação do form
+        $request->validate(
+            [
+                'token' => 'required',
+                'new_password' => 'required|min:8|max:32|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+                'new_password_confirmation' => 'required|same:new_password'
+            ],
+            [
+
+                'new_password.required' => 'A nova senha é obrigatória.',
+                'new_password.min' => 'A nova senha deve conter no mínimo :min caracteres.',
+                'new_password.max' => 'A nova senha deve conter no máximo :max caracteres.',
+                'new_password.regex' => 'A nova senha deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número.',
+                'new_password_confirmation.required' => 'A confirmação da nova senha é obrigatória.',
+                'new_password_confirmation.same' => 'A confirmação da nova senha deve ser igual à nova senha'
+            ]
+        );
+
+        //verifica se o token é válido
+
+        $user = User::where('token', $request->token)->first();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        //atualizar a senha no db
+
+        $user->password = bcrypt($request->new_password);
+        $user->token = null;
+        $user->save();
+
+        return redirect()->route('login')->with([
+            'success' => true
+        ]);
+    }
+
+    public function delete_account(Request $request)
+    {
+        // validação do form
+        $request->validate(
+            [
+                'delete_confirmation' => ['required', 'in:APAGAR']
+            ],
+            [
+                'delete_confirmation.required' => 'A confirmação é obrigatória',
+                'delete_confirmation.in' => 'É obrigatório escrever a palavra APAGAR'
+            ]
+        );
+
+        // remover a conta de usuario (hard delete ou soft delete)
+
+        //soft delete
+
+        $user = Auth::user();
+        $user->delete();
+
+        //hard delete
+
+        // $user = Auth::user();
+        // $user->forceDelete();
+
+        // logout
+
+        Auth::logout();
+
+        // redirect login
+        return redirect()->route('login')->with(['account_deleted' => true]);
     }
 }
