@@ -1,17 +1,43 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            Posts
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
-                </div>
+    <div class="py-10">
+
+        @empty($posts->count())
+
+            <div class="max-w-7xl mx-auto mb-6 px-8 text-center">
+
+                <p class="text-gray-400 mb-5">Ainda não há posts publicados.</p>
+
+                @can('post.create')
+                    <div class="max-w-7xl mx-auto mb-6 px-8">
+                        <a href="{{route('post.create')}}" class="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-6 rounded">Criar Post</a>
+                    </div>
+                @endcan
+
             </div>
-        </div>
+
+        @else
+
+        @can('post.create')
+            <div class="max-w-7xl mx-auto mb-6 px-8">
+                <a href="{{route('post.create')}}" class="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-6 rounded">Criar Post</a>
+            </div>
+        @endcan
+
+        @endempty
+
+        {{-- criar posts --}}
+        
+        @foreach($posts as $post)
+
+            <x-post-component :post="$post" />
+
+        @endforeach
+        
     </div>
 </x-app-layout>
