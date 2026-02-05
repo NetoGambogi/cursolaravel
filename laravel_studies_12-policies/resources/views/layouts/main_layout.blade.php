@@ -12,7 +12,11 @@
 </head>
 <body>
     
-    @include('layouts.topbar')
+    @auth
+        <x-user-bar />
+    @else 
+        @include('layouts.topbar')
+    @endauth
 
     @yield('content')
 
