@@ -6,7 +6,7 @@
 
         <hr>
 
-        <form action="{{ route('colaborators.create-colaborator') }}" method="post">
+        <form action="{{ route('colaborators.rh.create-colaborator') }}" method="post">
 
             @csrf
 
@@ -38,7 +38,9 @@
                                     <label for="select_department">Departamento</label>
                                     <select class="form-select" id="select_department" name="select_department">
                                         @foreach ($departments as $department)
-                                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                            @if($department->id == 2)
+                                                <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                     @error('select_department')

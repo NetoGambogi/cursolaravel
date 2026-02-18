@@ -10,20 +10,23 @@
 
         <div class="text-center my-5">
             <p>Nenhum colaborador encontrado.</p>
-            <a href="{{ route('colaborators.new-colaborator') }}" class="btn btn-primary">Criar novo colaborador</a>
+            <a href="{{ route('colaborators.rh.new-colaborator') }}" class="btn btn-primary">Criar novo colaborador</a>
         </div>
 
     @else
 
         <div class="mb-3">
-            <a href="{{ route('colaborators.new-colaborator') }}" class="btn btn-primary">Criar novo colaborador</a>
+            <a href="{{ route('colaborators.rh.new-colaborator') }}" class="btn btn-primary">Criar novo colaborador</a>
         </div>
 
-        <table class="table w-50" id="table">
+        <table class="table" id="table">
             <thead class="table-dark">
                 <th>Nome</th>
                 <th>Email</th>
-                <th>Permissões</th>
+                <th>Cargo</th>
+                <th>Salário</th>
+                <th>Data de admissão</th>
+                <th>Cidade</th>
                 <th></th>
             </thead>
             <tbody>
@@ -32,17 +35,15 @@
                     <tr>
                         <td>{{ $colaborator->name }}</td>
                         <td>{{ $colaborator->email }}</td>
-
-                        @php
-                            $permissions = json_decode($colaborator->permissions)
-                        @endphp
-
-                        <td>{{ implode(',', $permissions) }}</td>
+                        <td>{{ $colaborator->role }}</td>
+                        <td>R$ {{ $colaborator->detail->salary }}</td>
+                        <td>{{ $colaborator->detail->admission_date }}</td>
+                        <td>{{ $colaborator->detail->city }}</td>
 
                         <td>
                             <div class="d-flex gap-3 justify-content-end">
-                                    <a href="#" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-pen-to-square me-2"></i>Editar</a>
-                                    <a href="#" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-trash-can me-2"></i>Deletar</a>
+                                    <a href="{{ route('colaborators.rh.edit-colaborator', ['id' => $colaborator->id]) }}" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-pen-to-square me-2"></i>Editar</a>
+                                    <a href="{{ route('colaborators.rh.delete-colaborator', ['id' => $colaborator->id]) }}" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-trash-can me-2"></i>Deletar</a>
                             </div>
                         </td>
                     </tr>

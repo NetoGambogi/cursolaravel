@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('password')->nullable()->change();
+            $table->string('confirmation_token')->nullable()->unique()->after('password');
         });
     }
 
@@ -21,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 };

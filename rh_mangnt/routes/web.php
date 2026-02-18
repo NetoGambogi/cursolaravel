@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConfirmAccountController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RhUserController;
@@ -28,11 +29,22 @@ Route::middleware('auth')->group(function () {
     Route::post('/departments/update-department', [DepartmentController::class, 'updateDepartment'])->name('departments.update-department');
 
     Route::get('/departments/delete-department/{id}', [DepartmentController::class, 'deleteDepartment'])->name('departments.delete-department');
-    Route::delete('/departments/delete-department-confirm/{id}', [DepartmentController::class, 'deleteDepartmentConfirm'])->name('departments.delete-department-confirm');
+    Route::get('/departments/delete-department-confirm/{id}', [DepartmentController::class, 'deleteDepartmentConfirm'])->name('departments.delete-department-confirm');
 
     // colaboradores rh 
 
     Route::get('/rh-users', [RhUserController::class, 'index'])->name('colaborators.rh-users');
-    Route::get('/rh-users/new-colaborator', [RhUserController::class, 'newColaborator'])->name('colaborators.new-colaborator');
-    Route::post('/rh-users/create-colaborator', [RhUserController::class, 'createRhColaborator'])->name('colaborators.create-colaborator');
+    Route::get('/rh-users/new-colaborator', [RhUserController::class, 'newRhColaborator'])->name('colaborators.rh.new-colaborator');
+    Route::post('/rh-users/create-colaborator', [RhUserController::class, 'createRhColaborator'])->name('colaborators.rh.create-colaborator');
+    
+    Route::get('/rh-users/edit-colaborator/{id}', [RhUserController::class, 'editRhColaborator'])->name('colaborators.rh.edit-colaborator');
+    Route::post('/rh-users/update-colaborator', [RhUserController::class, 'updateRhColaborator'])->name('colaborators.rh.update-colaborator');
+
+    Route::get('/rh-users/delete-colaborator/{id}', [RhUserController::class, 'deleteRhColaborator'])->name('colaborators.rh.delete-colaborator');
+    Route::get('/rh-users/delete-colaborator-confirm/{id}', [RhUserController::class, 'deleteRhColaboratorConfirm'])->name('colaborators.rh.delete-confirm');
+
+    // confirmação de email e definição da senha
+
+    Route::get('/confirm-account/{token}', [ConfirmAccountController::class, 'confirmAccount'])->name('confirm-account');
+
 });
