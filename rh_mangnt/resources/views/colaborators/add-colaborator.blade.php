@@ -1,12 +1,12 @@
-<x-layout-app page-title="Novo colaborador RH">
+<x-layout-app page-title="Novo colaborador">
 
     <div class="w-100 p-4">
 
-        <h3>Novo colaborador do Recursos Humanos</h3>
+        <h3>Novo colaborador</h3>
 
         <hr>
 
-        <form action="{{ route('colaborators.rh.create-colaborator') }}" method="post">
+        <form action="#" method="post">
 
             @csrf
 
@@ -38,23 +38,15 @@
                                     <label for="select_department">Departamento</label>
                                     <select class="form-select" id="select_department" name="select_department">
                                         @foreach ($departments as $department)
-                                            @if($department->id == 2)
                                                 <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                            @endif
                                         @endforeach
                                     </select>
                                     @error('select_department')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div>
-                                    <a href="{{ route('departments.new-department') }}"
-                                        class="btn btn-outline-primary mt-4"><i class="fas fa-plus"></i></a>
-                                </div>
                             </div>
                         </div>
-
-                        <p class="mb-3">Perfil: <strong>Recursos Humanos</strong></p>
 
                     </div>
 
@@ -125,7 +117,7 @@
                 </div>
 
                 <div class="mt-3">
-                    <a href="{{ route('colaborators.rh-users') }}" class="btn btn-outline-danger me-3">Cancelar</a>
+                    <a href="{{ route('rh.management.home') }}" class="btn btn-outline-danger me-3">Cancelar</a>
                     <button type="submit" class="btn btn-primary">Criar colaborador</button>
                 </div>
 

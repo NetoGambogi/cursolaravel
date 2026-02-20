@@ -23,9 +23,13 @@ class AppServiceProvider extends ServiceProvider
         // gates
 
         // gate que verifica se o usuario é admin
-
         Gate::define('admin', function(){
             return auth()->user()->role === 'admin';
+        });
+
+        // gate que verifica se o usuario é rh
+        Gate::define('rh', function(){
+            return auth()->user()->role === 'rh';
         });
     }
 }

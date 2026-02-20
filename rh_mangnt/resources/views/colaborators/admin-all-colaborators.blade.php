@@ -2,7 +2,7 @@
 
     <div class="w-100 p-4">
 
-        <h3>All colaborators</h3>
+        <h3>Todos colaboradores</h3>
 
         <hr>
 
@@ -47,8 +47,13 @@
 
                         <td>
                             <div class="d-flex gap-3 justify-content-end">
-                                    <a href="#" class="btn btn-sm btn-outline-dark"><i class="fa-regular fas fa-eye me-2"></i>Detalhes</a>
-                                    <a href="#" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-trash-can me-2"></i>Deletar</a>
+                                    @if(empty($colaborator->deleted_at))
+                                        <a href="{{ route('colaborators.details', ['id' => $colaborator->id]) }}" class="btn btn-sm btn-outline-dark"><i class="fa-regular fas fa-eye me-2"></i>Detalhes</a>
+                                        <a href="{{ route('colaborators.delete', ['id' => $colaborator->id]) }}" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-trash-can me-2"></i>Deletar</a>
+                                    @else 
+                                        <a href="{{ route('colaborators.retore', ['id' => $colaborator->id]) }}" class="btn btn-sm btn-outline-dark"><i class="fas fa-trash-arrow-up me-2"></i>Restaurar</a>
+                                    @endif
+                                    
                             </div>
                         </td>
                     </tr>
