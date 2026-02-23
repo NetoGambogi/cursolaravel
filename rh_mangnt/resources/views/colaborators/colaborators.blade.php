@@ -15,6 +15,10 @@
         </div>
 
     @else
+    
+    <div class="mb-3">
+        <a href="{{ route('rh.management.new-colaborator') }}" class="btn btn-primary">Novo colaborador</a>
+    </div>
 
         <table class="table" id="table">
             <thead class="table-dark">
@@ -50,10 +54,11 @@
                         <td>
                             <div class="d-flex gap-3 justify-content-end">
                                     @if(empty($colaborator->deleted_at))
-                                        <a href="{{ route('colaborators.details', ['id' => $colaborator->id]) }}" class="btn btn-sm btn-outline-dark"><i class="fa-regular fas fa-eye me-2"></i>Detalhes</a>
-                                        <a href="{{ route('colaborators.delete', ['id' => $colaborator->id]) }}" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-trash-can me-2"></i>Deletar</a>
+                                        <a href="{{ route('rh.management.edit-colaborator', ['id' => $colaborator->id])}}" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-edit me-2"></i>Editar</a>
+                                        <a href="{{ route('rh.management.details', ['id' => $colaborator->id])}}" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-eye me-2"></i>Detalhes</a>
+                                        <a href="{{ route('rh.management.delete', ['id' => $colaborator->id])}}" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-trash-can me-2"></i>Deletar</a>
                                     @else 
-                                        <a href="{{ route('colaborators.retore', ['id' => $colaborator->id]) }}" class="btn btn-sm btn-outline-dark"><i class="fas fa-trash-arrow-up me-2"></i>Restaurar</a>
+                                        <a href="{{ route('rh.management.restore', ['id' => $colaborator->id])}}" class="btn btn-sm btn-outline-dark"><i class="fas fa-trash-arrow-up me-2"></i>Restaurar</a>
                                     @endif
                                     
                             </div>

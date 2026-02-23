@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -50,5 +51,27 @@ class ProfileController extends Controller
         $user->save();
 
         return redirect()->back()->with('success_change_data', 'Dados atualizados com sucesso.');
+    }
+
+    public function updateUserAddress(Request $request)
+    {
+        //validacao do formulario
+        $request->validate([
+            'address' => 'required|min:3|max:100',
+            'zip_code' => 'required|min:3|max:10',
+            'city' => 'required|min:3|max:50',
+            'phone' => 'required|min:8|max:20',
+        ]);
+
+        //buscar o detalhes do usuario
+        $user = User::with('detail')->findOrFail(auth()->id());
+
+        $user->detail->address = $request->address;
+        $user->detail->zip_code = $request->zip_code;
+        $user->detail->city = $request->city;
+        $user->detail->phone = $request->phone;
+        $user->detail->save();
+
+        return redirect()->back()->with('success_change_address', 'Dados atualizados com sucesso.');
     }
 }

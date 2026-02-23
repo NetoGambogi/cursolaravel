@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ColaboratorsController;
 use App\Http\Controllers\ConfirmAccountController;
 use App\Http\Controllers\DepartmentController;
@@ -15,15 +16,25 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::view('/', 'home');
+    Route::redirect('/', 'home');
 
-    Route::view('/home', 'home')->name('home');
+    Route::get('/home', function () {
+
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('admin.home');
+        } elseif (auth()->user()->role === 'rh') {
+            return redirect()->route('rh.management.home');
+        } else {
+            return redirect()->route('colaborator');
+        }
+    })->name('home');
 
     // pagina do perfil do usuario
 
     Route::get('/user/profile', [ProfileController::class, 'index'])->name('user.profile');
     Route::post('/user/profile/update-password', [ProfileController::class, 'updatePassword'])->name('user.profile.update-password');
     Route::post('/user/profile/update-user-data', [ProfileController::class, 'updateUserData'])->name('user.profile.update-user-data');
+    Route::post('/user/profile/update-user-address', [ProfileController::class, 'updateUserAddress'])->name('user.profile.update-user-address');
 
     // departamentos
 
@@ -55,6 +66,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/rh-users/management/home', [RhManagementController::class, 'home'])->name('rh.management.home');
     Route::get('/rh-users/management/new-colaborator', [RhManagementController::class, 'newColaborator'])->name('rh.management.new-colaborator');
+    Route::post('/rh-users/management/create-colaborator', [RhManagementController::class, 'createColaborator'])->name('rh.management.create-colaborator');
+    Route::get('/rh-users/management/edit-colaborator/{id}', [RhManagementController::class, 'editColaborator'])->name('rh.management.edit-colaborator');
+    Route::post('/rh-users/management/update-colaborator', [RhManagementController::class, 'updateColaborator'])->name('rh.management.update-colaborator');
+    Route::get('/rh-users/management/details/{id}', [RhManagementController::class, 'showDetails'])->name('rh.management.details');
+    Route::get('/rh-users/management/delete/{id}', [RhManagementController::class, 'deleteColaborator'])->name('rh.management.delete');
+    Route::get('/rh-users/management/delete-confirm/{id}', [RhManagementController::class, 'deleteColaboratorConfirm'])->name('rh.management.delete-confirm');
+    Route::get('/rh-users/management/restore/{id}', [RhManagementController::class, 'restoreColaborator'])->name('rh.management.restore');
 
     // lista de colaboradores do admin
 
@@ -63,4 +81,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/colaborators/delete/{id}', [ColaboratorsController::class, 'deleteColaborator'])->name('colaborators.delete');
     Route::get('/colaborators/delete-confirm/{id}', [ColaboratorsController::class, 'deleteColaboratorConfirm'])->name('colaborators.delete-confirm');
     Route::get('/colaborators/restore/{id}', [ColaboratorsController::class, 'restoreColaborator'])->name('colaborators.retore');
+
+    // rotas do admin
+    Route::get('/admin/home', [AdminController::class, 'home'])->name('admin.home');
+
+    //rotas do colaborador
+    Route::get('/colaborator', [ColaboratorsController::class, 'home'])->name('colaborator');
 });
