@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -97,5 +98,75 @@ class FileController extends Controller
 
         echo '<pre>';
         print_r($files);
+    }
+
+    public function deleteFile()
+    {
+        Storage::delete('file1.txt');
+
+        echo 'Arquivo removido com sucesso';
+
+        //deletar todos arquivos
+        // Storage::delete(Storage::files());
+    }
+
+    public function createFolder()
+    {
+        Storage::makeDirectory('teste');
+    }
+
+    public function deleteFolder()
+    {
+        Storage::deleteDirectory('teste');
+    }
+
+    public function listFilesWithMetadata()
+    {
+        $list_files = Storage::allFiles();
+
+        $files = [];
+
+        foreach ($list_files as $file) {
+            $files[] = [
+                'name' => $file,
+                'size' => round(Storage::size($file) / 1024, 2) . ' Kb',
+                'last_modified' => Carbon::createFromTimestamp(Storage::lastModified($file))->format('d-m-Y H:i:s'),
+                'mime_type' => Storage::mimeType($file)
+            ];
+        }
+
+        return view('list-files-with-metadata', compact('files'));
+    }
+
+    public function listFilesForDownload()
+    {
+        $list_files = Storage::allFiles();
+
+        $files = [];
+
+        foreach ($list_files as $file) {
+            $files[] = [
+                'name' => $file,
+                'size' => round(Storage::size($file) / 1024, 2) . ' Kb',
+                'file' => basename($file)
+            ];
+        }
+
+        return view('list-files-for-download', compact('files'));
+    }
+
+    public function uploadFile(Request $request)
+    {
+        // $request->file('arquivo')->store('uploads');
+
+        // $request->file('arquivo')->storeAs('uploads', $request->file('arquivo')->getClientOriginalName());
+
+        $request->validate([
+            'arquivo' => 'required|mimes:pdf,jpg,png|max:2048'
+        ]);
+
+        $request->file('arquivo')->storeAs('uploads', $request->file('arquivo')->getClientOriginalName());
+
+        echo 'arquivo salvo com sucesso.';
     }
 }
