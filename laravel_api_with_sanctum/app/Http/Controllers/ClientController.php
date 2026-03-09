@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Services\ApiResponse;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -13,7 +14,7 @@ class ClientController extends Controller
     public function index()
     {
         // mostrar todos os clientes do banco de dados
-        return response()->json(Client::all(), 200);
+        return ApiResponse::success(Client::all());
     }
 
     /**
@@ -31,13 +32,7 @@ class ClientController extends Controller
         // adicionar novo cliente ao db
         $client = Client::create($request->all());
 
-        return response()->json(
-            [
-                'message' => 'Cliente criado com sucesso.',
-                'data' => $client,
-            ],
-            200
-        );
+        return ApiResponse::success($client);
     }
 
     /**
@@ -50,9 +45,9 @@ class ClientController extends Controller
 
         // resposta
         if ($client) {
-            return response()->json($client, 200);
+            return ApiResponse::success($client);
         } else {
-            return response()->json(['message' => 'Cliente não encontrado.'], 404);
+            return ApiResponse::error('Cliente não encontrado.');
         }
     }
 
@@ -73,15 +68,9 @@ class ClientController extends Controller
 
         if ($client) {
             $client->update($request->all());
-            return response()->json(
-                [
-                    'message' => 'Cliente atualizado com sucesso.',
-                    'data' => $client
-                ],
-                200
-            );
+            return ApiResponse::success($client);
         } else {
-            return response()->json(['message' => 'Cliente não encontrado.'], 404);
+            return ApiResponse::error('Cliente não encontrado.');
         }
     }
 
@@ -90,6 +79,14 @@ class ClientController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // deletar um cliente
+        $client = Client::find($id);
+
+        if ($client) {
+            $client->delete();
+            return ApiResponse::success('Cliente deletado com sucesso.');
+        } else {
+            return ApiResponse::error('Cliente não encontrado.');
+        }
     }
 }
