@@ -13,6 +13,11 @@ class ClientController extends Controller
      */
     public function index()
     {
+        //checar se o token autoriza essa requisição
+        // if (!auth()->user()->tokenCan('clients:list')) {
+        //     return ApiResponse::unauthorized();
+        // }
+
         // mostrar todos os clientes do banco de dados
         return ApiResponse::success(Client::all());
     }
@@ -40,6 +45,11 @@ class ClientController extends Controller
      */
     public function show(string $id)
     {
+        //checar se o token autoriza essa requisição
+        if (!auth()->user()->tokenCan('clients:detail')) {
+            return ApiResponse::unauthorized();
+        }
+
         // detalhe do cliente
         $client = Client::find($id);
 
