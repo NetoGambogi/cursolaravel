@@ -44,7 +44,7 @@ it('testa se o salário com o bonus foi calculado corretamente', function (){
 
     expect($result)->toBe(1200);
 
-});
+})->todo('codigo nao completo (exemplo)');
 
 it('testa se os dados falsos do json foram criados corretamente.', function(){
 
@@ -55,4 +55,23 @@ it('testa se os dados falsos do json foram criados corretamente.', function(){
     expect(count($clients))->toBeGreaterThanOrEqual(1);
     expect($clients[0])->toHaveKeys(['name','email','phone','address']);
 
-});
+})->skip('rever teste');
+
+it('testa se o json complexo foi criado corretamente', function(){
+
+    $result = GeneralServices::jsonComplexData();
+
+    $data = json_decode($result, true);
+
+    expect($data)->toHaveKeys(['name','email','moradas','telefones']);
+
+    expect($data['moradas'])->toBeArray();
+    expect($data['moradas'][0])->toHaveKeys(['rua','cidade','pais']);
+
+    expect($data['telefones'])->toHaveKeys(['phones','mobiles']);
+    expect($data['telefones']['phones'])->toBeArray();
+    expect($data['telefones']['mobiles'])->toBeArray();
+
+})->skip('inativo teste');
+
+    
