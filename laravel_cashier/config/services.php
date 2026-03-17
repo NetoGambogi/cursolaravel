@@ -31,4 +31,11 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'product_id' => env('STRIPE_PRODUCT_ID'),
+        'monthly_price' => env('STRIPE_MONTHLY_PRICE_ID'),
+        'yearly_price' => env('STRIPE_YEARLY_PRICE_ID'),
+        'longest_price' => env('STRIPE_LONGEST_PRICE_ID'),
+    ],
+
 ];
