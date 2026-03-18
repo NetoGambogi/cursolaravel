@@ -54,7 +54,7 @@ Sistema de Gestão de Recursos Humanos com:
 
 ## 🔗 Link do curso
 
-[Adicionar aqui o link da Udemy]
+[Laravel 11 & 12: Framework, Ecossistema e Projetos Web](https://www.udemy.com/course/laravel-11-framework-ecossistema-e-projetos-web/)
 
 ## 📜 Certificado
 
